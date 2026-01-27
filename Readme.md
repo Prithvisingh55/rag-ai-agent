@@ -15,7 +15,7 @@ This project includes:
 ## Features
 
 * Ask questions directly from your PDF documents
-* No hallucinations – answers are generated only from retrieved context
+* No hallucinations, answers are generated only from retrieved context
 * Clean backend architecture
 * Lightweight frontend widget
 * Works for insurance, SaaS docs, policies, HR, legal, internal tools, etc.
@@ -25,7 +25,7 @@ This project includes:
 ## Project Structure
 
 ```
-insurance-rag-bot/
+simple-rag-bot/
   backend/
     main.py
     requirements.txt
@@ -37,8 +37,6 @@ insurance-rag-bot/
       make_sample_pdf.py
     data/
       knowledge.pdf
-      index.faiss
-      chunks.json
 
   frontend/
     package.json
@@ -152,8 +150,6 @@ The bot will:
 2. Retrieve the most relevant chunks
 3. Generate a safe answer from those chunks only
 
----
-
 ## How RAG Works (Simple)
 
 ```
@@ -165,8 +161,6 @@ This ensures:
 * Accurate answers
 * Domain-specific responses
 * No hallucinations
-
----
 
 ## Production Tips
 
@@ -185,18 +179,12 @@ This ensures:
 If you hit rate limits or token limits, consider:
 * Using other providers (e.g., Gemini)
 
----
-
 ## License
 
 MIT – free to use, modify, and ship.
 
----
-
 ## Credits
 
 Built as a clean educational RAG reference project.
-
----
 
 Happy building.
