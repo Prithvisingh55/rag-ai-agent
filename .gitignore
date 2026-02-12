@@ -1,16 +1,16 @@
-.venv
-venv
+# Python virtual environment
+backend/.venv/
 
+# Python cache
 __pycache__/
 *.pyc
+
+# FAISS generated files
+backend/data/index.faiss
+backend/data/chunks.json
+
+# Node modules
+frontend/node_modules/
+
+# Env files
 .env
-.env.*
-.DS_Store
-.idea/
-.vscode/
-*.log
-node_modules/
-dist/
-build/
-.venv
-venv/

@@ -1,20 +1,29 @@
 import numpy as np
-from openai import OpenAI
+import requests
 import faiss
 
-client = OpenAI()
-CHAT_MODEL = "gpt-5.2"
-EMBED_MODEL = "text-embedding-3-small"
+OLLAMA_EMBED_URL = "http://localhost:11434/api/embeddings"
+OLLAMA_CHAT_URL = "http://localhost:11434/api/generate"
+MODEL_NAME = "phi"
 
 def embed_query(query: str):
-    resp = client.embeddings.create(model=EMBED_MODEL, input=[query])
-    vec = np.array([resp.data[0].embedding], dtype="float32")
+    response = requests.post(
+        OLLAMA_EMBED_URL,
+        json={
+            "model": MODEL_NAME,
+            "prompt": query
+        }
+    )
+
+    embedding = response.json()["embedding"]
+    vec = np.array([embedding], dtype="float32")
     faiss.normalize_L2(vec)
     return vec
 
 def retrieve(query, index, chunks, k=4):
     qvec = embed_query(query)
     scores, ids = index.search(qvec, k)
+
     results = []
     for i in ids[0]:
         if i != -1:
@@ -24,13 +33,27 @@ def retrieve(query, index, chunks, k=4):
 def generate_answer(user_question, retrieved_chunks):
     context = "\n\n".join(retrieved_chunks)
 
-    response = client.responses.create(
-        model=CHAT_MODEL,
-        instructions=(
-            "You are an Insurance Agency Customer Care assistant. "
-            "Use only the provided context to answer. "
-            "If not found, say you don't have it and offer human support."
-        ),
-        input=f"Context:\n{context}\n\nQuestion:\n{user_question}"
+    prompt = f"""
+You are an Insurance Agency Customer Care assistant.
+Use ONLY the provided context to answer.
+If the answer is not in the context, say you don't have that information.
+
+Context:
+{context}
+
+Question:
+{user_question}
+
+Answer:
+"""
+
+    response = requests.post(
+        OLLAMA_CHAT_URL,
+        json={
+            "model": MODEL_NAME,
+            "prompt": prompt,
+            "stream": False
+        }
     )
-    return response.output_text
+
+    return response.json()["response"]

@@ -1,14 +1,26 @@
 import json
 import numpy as np
 import faiss
-from openai import OpenAI
+import requests
 
-client = OpenAI()
-EMBED_MODEL = "text-embedding-3-small"
+OLLAMA_URL = "http://localhost:11434/api/embeddings"
+EMBED_MODEL = "phi"
 
 def embed_texts(texts):
-    resp = client.embeddings.create(model=EMBED_MODEL, input=texts)
-    vectors = [d.embedding for d in resp.data]
+    vectors = []
+
+    for text in texts:
+        response = requests.post(
+            OLLAMA_URL,
+            json={
+                "model": EMBED_MODEL,
+                "prompt": text
+            }
+        )
+
+        embedding = response.json()["embedding"]
+        vectors.append(embedding)
+
     arr = np.array(vectors, dtype="float32")
     faiss.normalize_L2(arr)
     return arr
