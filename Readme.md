@@ -72,7 +72,7 @@ simple-rag-bot/
 
 * Python 3.9+
 * Node.js 18+
-* OpenAI API key
+* Ollama
 
 ---
 
